@@ -1,0 +1,139 @@
+/* =============================================================
+   360LEARNING — HOMEPAGE BACKGROUND IMAGE TEMPLATE
+   =============================================================
+
+   HOW TO USE
+   ----------
+   1. Upload your image to a public URL (GitHub Pages recommended —
+      see README for setup instructions).
+   2. Replace IMAGE_URL below with your image's public URL.
+   3. Paste the entire file into 360Learning:
+        Settings → Branding → Group's Custom CSS
+   4. Click outside the field to save, then hard-refresh:
+        Mac: Cmd+Shift+R   |   Windows: Ctrl+Shift+R
+
+   TUNING CHEAT SHEET
+   ------------------
+   background-position: X% Y%
+     X%  — horizontal: 0% = far left, 100% = far right
+     Y%  — vertical:   0% = top,      100% = bottom
+     Start around "left 65%" for a portrait/group photo.
+
+   opacity: 0.XX
+     Suggested range: 0.05 (very subtle) → 0.15 (clearly visible)
+     0.10 is a good starting point.
+
+   Right mask  →  linear-gradient(to right, black XX%, transparent YY%)
+     XX% = where the fade begins (lower = starts fading sooner)
+     YY% = where it's fully gone (keep ~20-25pp gap for a soft fade)
+     Start at "black 30%, transparent 75%" and adjust inward if you
+     still see a hard edge on wider screens / without the newsfeed.
+
+   Top mask    →  linear-gradient(to bottom, transparent 0%, black XX%, ...)
+     XX% = how far down before the image is fully visible
+     Higher value = softer blend into the nav bar.
+     Start at 28% and increase if the edge is still visible.
+
+   ============================================================= */
+
+
+/* =================== UI TIDYING =================== */
+
+.section.logo-section.workspace-navigation-logo {
+  display: none !important;
+}
+.nested-section.home-section {
+  margin-top: 8px !important;
+}
+.group-pic-container .type-icon {
+  display: none !important;
+}
+
+
+/* =================== HOMEPAGE: GRADIENT BACKGROUND =================== */
+
+.__view:has(#my-work-section) {
+  position: relative !important;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--primary-600) 2%, white) 0%,
+    color-mix(in srgb, var(--primary-600) 6%, white) 100%
+  ) !important;
+  min-height: 100vh !important;
+}
+
+
+/* =================== HOMEPAGE: BACKGROUND IMAGE =================== */
+/*
+  The image sits in a ::before pseudo-element so it never interferes
+  with page content. background-attachment: fixed means it stays put
+  while the user scrolls — giving a parallax / depth effect.
+
+  NOTE ON VIEWPORT WIDTH:
+  Because the image is fixed to the viewport, it will appear cut off
+  on the right on wider screens (e.g. when the newsfeed panel is hidden).
+  The right-side mask gradient below fades it out so this is seamless.
+  Adjust "background-position" left/right to control composition.
+*/
+
+.__view:has(#my-work-section)::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 100% !important;
+
+  /* ↓↓↓  REPLACE THIS URL WITH YOUR IMAGE  ↓↓↓ */
+  background-image: url('IMAGE_URL') !important;
+  /* ↑↑↑  REPLACE THIS URL WITH YOUR IMAGE  ↑↑↑ */
+
+  background-size: 75% auto !important;
+
+  /* Adjust X% (left/right) and Y% (up/down) to frame the photo */
+  background-position: left 65% !important;
+
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+
+  /* Adjust between 0.05 (barely there) and 0.15 (clearly visible) */
+  opacity: 0.10 !important;
+
+  filter: grayscale(15%) !important;
+
+  /*
+    Two mask layers combined:
+      1. Top-to-bottom fade — blends the image into the nav bar
+      2. Right-side fade    — prevents a hard edge on wide screens
+
+    mask-composite: intersect means BOTH masks apply simultaneously.
+    -webkit-mask-composite: source-in is the Safari/Chrome equivalent.
+  */
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, black 28%, black 60%, transparent 100%),
+    linear-gradient(to right, black 30%, transparent 75%) !important;
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, black 28%, black 60%, transparent 100%),
+    linear-gradient(to right, black 30%, transparent 75%) !important;
+  mask-composite: intersect !important;
+  -webkit-mask-composite: source-in !important;
+
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Keep all page content above the photo layer */
+.__view:has(#my-work-section) > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+
+/* =================== MY WORK: SHADOW LIFT =================== */
+
+#my-work-section {
+  border-radius: 12px !important;
+  box-shadow:
+    0 2px 8px color-mix(in srgb, var(--primary-600) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--primary-600) 5%, transparent) !important;
+}
